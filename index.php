@@ -17,7 +17,7 @@ $events = $bot->parseEventRequest(file_get_contents('php://input'), $signature);
 // process rooply each events in array
 foreach ($events as $event) {
   // reply message and proceed next event
-  replyTextMessage($bot, $event->getReplyToken(), 'TextMessage');
+  // replyTextMessage($bot, $event->getReplyToken(), 'TextMessage');
 
   // reply image and proceed next event
   replyImageMessage($bot, $event->getReplyToken(), 'https://'.$_SERVER['HTTP_HOST'].'/img/original.jpg', 'https://'.$_SERVER['HTTP_HOST'].'/img/preview.jpg');
