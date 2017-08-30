@@ -17,6 +17,6 @@ $events = $bot->parseEventRequest(file_get_contents('php://input'), $signature);
 // process rooply each events in array
 foreach ($events as $event) {
   // reply text
-  $bot->replyText($event->getReplyToken(), 'TextMessage');
+  $bot->replyText($event->getReplyToken(), 'TextMessages');
 }
 ?>
