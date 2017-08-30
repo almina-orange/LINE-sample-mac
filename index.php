@@ -16,7 +16,19 @@ $events = $bot->parseEventRequest(file_get_contents('php://input'), $signature);
 
 // process rooply each events in array
 foreach ($events as $event) {
-  // reply text
-  $bot->replyText($event->getReplyToken(), 'TextMessages');
+  // reply message and next event
+  replyTextMessage($bot, $event->getReplyToken(), 'TextMessage');
+}
+
+// text reply
+function replyTextMessage($bot, $replyToken, $text) {
+  // reply and get response
+  $response = $bot->replyMessage($replyToken, new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text));
+
+  // if response is storange
+  if (!$response->isSucceeded()) {
+    // output error
+    error_log('Failed! ' . $response->getHTTPStatus . ' ' . $response->getRawBody());
+  }
 }
 ?>
