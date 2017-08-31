@@ -56,18 +56,50 @@ foreach ($events as $event) {
   // replyConfirmTemplate($bot, $event->getReplyToken(), 'Want to see it in the WEB?', 'Want to see it in the WEB?', $action1, $action2);
 
   // reply carousel template and proceed next event
-  $columnArray = array();
-  for ($i=0; $i < 5; $i++) {
-    $actionArray = array();
-    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 1, 'c-'.$i. 1));
-    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 2, 'c-'.$i. 2));
-    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 3, 'c-'.$i. 3));
+  // $columnArray = array();
+  // for ($i=0; $i < 5; $i++) {
+  //   $actionArray = array();
+  //   array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 1, 'c-'.$i. 1));
+  //   array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 2, 'c-'.$i. 2));
+  //   array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 3, 'c-'.$i. 3));
+  //
+  //   // instancing each column of carousel
+  //   $column = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder(($i+1).'days later weather', 'SUNNY', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', $actionArray);
+  //
+  //   array_push($columnArray, $column);
+  // }
+  // replyCarouselTemplate($bot, $event->getReplyToken(), 'WEATHER NEWS', $columnArray);
 
-    $column = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder(($i+1).'days later weather', 'SUNNY', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', $actionArray);
+  // get image from user and storage on server
+  if ($event instanceof \LINE\LINEBot\Event\MessageEvent\ImageMessage) {
+    // get event contents
+    $content = $bot->getMessageContent($event->getMessageId());
 
-    array_push($columnArray, $column);
+    // get content header
+    $headers = $content->getHeaders();
+    error_log(var_export($headers, true));
+
+    // storage folder
+    $directory_path = 'tmp';
+    $filename = uniqid();
+
+    // get content information
+    $extension = explode('/', $headers['Content-Type'])[1];
+
+    // if folder not exist
+    if (!file_exists($directory_path)) {
+      // make folder and change mode to 0777
+      if (mkdir($directory_path, 0777, true))) {
+        chmod($directory_path, 0777);
+      }
+    }
+
+    // storage contents on folder
+    file_put_contents($directory_path.'/'.$filename.'.'.$extension, $content->getRawBody);
+
+    // reply storaged folder url
+    replyTextMessage($bot, $event->getReplyToken(), 'http://'.$_SERVER['HTTP_HOST'].'/'.$directory_path.'/'.$filename.'.'.$extension);
   }
-  replyCarouselTemplate($bot, $event->getReplyToken(), 'WEATHER NEWS', $columnArray);
 }
 
 /*===== function =====*/
