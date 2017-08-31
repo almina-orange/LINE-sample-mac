@@ -59,9 +59,9 @@ foreach ($events as $event) {
   $columnArray = array();
   for ($i=0; $i < 5; $i++) {
     $actionArray = array();
-    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'.1, 'c-'.$i.1));
-    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'.2, 'c-'.$i.2));
-    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'.3, 'c-'.$i.3));
+    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 1, 'c-'.$i. 1));
+    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 2, 'c-'.$i. 2));
+    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'. 3, 'c-'.$i. 3));
 
     $column = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder(($i+1).'days later weather', 'SUNNY', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', $actionArray);
 
