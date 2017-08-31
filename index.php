@@ -51,9 +51,23 @@ foreach ($events as $event) {
   // replyButtonsTemplate($bot, $event->getReplyToken(), 'Weather News: Sunny', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', 'WEATHER NEWS', 'SUNNY', $action1, $action2, $action3);
 
   // reply confirm template and proceed next event
-  $action1 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('YES', 'http://google.jp');
-  $action2 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('NO', 'NO');
-  replyConfirmTemplate($bot, $event->getReplyToken(), 'Want to see it in the WEB?', 'Want to see it in the WEB?', $action1, $action2);
+  // $action1 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('YES', 'http://google.jp');
+  // $action2 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('NO', 'NO');
+  // replyConfirmTemplate($bot, $event->getReplyToken(), 'Want to see it in the WEB?', 'Want to see it in the WEB?', $action1, $action2);
+
+  // reply carousel template and proceed next event
+  $columnArray = array();
+  for ($i=0; $i < 5; $i++) {
+    $actionArray = array();
+    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'.1, 'c-'.$i.1));
+    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'.2, 'c-'.$i.2));
+    array_push($actionArray, new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('Button'.$i.'-'.3, 'c-'.$i.3));
+
+    $column = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder(($i+1).'days later weather', 'SUNNY', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', $actionArray);
+
+    array_push($columnArray, $column);
+  }
+  replyCarouselTemplate($bot, $event->getReplyToken(), 'WEATHER NEWS', $columnArray);
 }
 
 /*===== function =====*/
@@ -178,6 +192,19 @@ function replyConfirmTemplate($bot, $replyToken, $alternativeText, $text, ...$ac
   $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alternativeText, $confirmBuilder);
 
   // confirm template
+  $response = $bot->replyMessage($replyToken, $builder);
+
+  if (!$response->isSucceeded()) {
+    error_log('Failed! '.$response->getHTTPStatus.' '.$response->getRawBody());
+  }
+}
+
+// carousel template reply
+function replyCarouselTemplate($bot, $replyToken, $alternativeText, $columnArray) {
+  // instancing "CarouselTemplateBuilder" and "TemplateMessageBuilder"
+  $carouselBuilder = new \LINE\LINEBot\MessageBuilder\CarouselTemplateBuilder($columnArray);
+  $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alternativeText, $carouselBuilder);
+
   $response = $bot->replyMessage($replyToken, $builder);
 
   if (!$response->isSucceeded()) {
