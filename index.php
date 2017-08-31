@@ -45,7 +45,7 @@ foreach ($events as $event) {
   $action1 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('TOMORROW WEATHER', 'tomorrow');
   $action2 = new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('WEEKEND WEATHER', 'weekend');
   $action3 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('PREVIEW WEB', 'http://google.jp');
-  replyButtonsTemplate($bot, $event->getReplyToken(), 'Weather News: Sunny', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', 'WEATHER NEWS', 'SUNNY', $action1, $action2, $action3)
+  replyButtonsTemplate($bot, $event->getReplyToken(), 'Weather News: Sunny', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', 'WEATHER NEWS', 'SUNNY', $action1, $action2, $action3);
 }
 
 /*===== function =====*/
