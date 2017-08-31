@@ -16,6 +16,9 @@ $events = $bot->parseEventRequest(file_get_contents('php://input'), $signature);
 
 // process rooply each events in array
 foreach ($events as $event) {
+  // preview input
+  error_log(file_get_contents('php://input'));
+
   // collect multi messages
   // $replyText = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('TextMessage');
   // $replyImg = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder('https://'.$_SERVER['HTTP_HOST'].'/img/original.jpg', 'https://'.$_SERVER['HTTP_HOST'].'/img/preview.jpg');
@@ -42,10 +45,15 @@ foreach ($events as $event) {
   // replyAudioMessage($bot, $event->getReplyToken(), 'https://'.$_SERVER['HTTP_HOST'].'/audio/sample.m4a', 6000);
 
   // reply buttons template and proceed next event
-  $action1 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('TOMORROW WEATHER', 'tomorrow');
-  $action2 = new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('WEEKEND WEATHER', 'weekend');
-  $action3 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('PREVIEW WEB', 'http://google.jp');
-  replyButtonsTemplate($bot, $event->getReplyToken(), 'Weather News: Sunny', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', 'WEATHER NEWS', 'SUNNY', $action1, $action2, $action3);
+  // $action1 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('TOMORROW WEATHER', 'tomorrow');
+  // $action2 = new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('WEEKEND WEATHER', 'weekend');
+  // $action3 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('PREVIEW WEB', 'http://google.jp');
+  // replyButtonsTemplate($bot, $event->getReplyToken(), 'Weather News: Sunny', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', 'WEATHER NEWS', 'SUNNY', $action1, $action2, $action3);
+
+  // reply confirm template and proceed next event
+  $action1 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('YES', 'http://google.jp');
+  $action2 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('NO', 'NO');
+  replyConfirmTemplate($bot, $event->getReplyToken(), 'Want to see it in the WEB?', 'Want to see it in the WEB?', $action1, $action2);
 }
 
 /*===== function =====*/
@@ -148,6 +156,28 @@ function replyButtonsTemplate($bot, $replyToken, $alternativeText, $imageUrl, $t
   $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alternativeText, $buttonBuilder);
 
   // button template
+  $response = $bot->replyMessage($replyToken, $builder);
+
+  if (!$response->isSucceeded()) {
+    error_log('Failed! '.$response->getHTTPStatus.' '.$response->getRawBody());
+  }
+}
+
+// confirm template reply
+function replyConfirmTemplate($bot, $replyToken, $alternativeText, $text, ...$action) {
+  // action array
+  $actionArray = array();
+
+  // add all actions
+  foreach ($actions as $value) {
+    array_push($actionArray, $value);
+  }
+
+  // instancing "ConfirmTemplateBuilder" and "TemplateMessageBuilder"
+  $confirmBuilder = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\ConfirmTemplateBuilder($text, $actionArray);
+  $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alternativeText, $confirmBuilder);
+
+  // confirm template
   $response = $bot->replyMessage($replyToken, $builder);
 
   if (!$response->isSucceeded()) {
