@@ -110,11 +110,11 @@ function replyAudioMessage($bot, $replyToken, $originalContentUrl, $audioLength)
 // multi message reply
 function replyMultiMessage($bot, $replyToken, ...$msgs) {
   // instancing MultiMessageBuilder
-  $bulder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+  $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
 
   // add all messages in builder
   foreach($msgs as $value) {
-    $bulder->add($value);
+    $builder->add($value);
   }
 
   // multi message
