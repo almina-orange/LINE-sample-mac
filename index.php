@@ -71,35 +71,47 @@ foreach ($events as $event) {
   // replyCarouselTemplate($bot, $event->getReplyToken(), 'WEATHER NEWS', $columnArray);
 
   // get image from user and storage on server
-  if ($event instanceof \LINE\LINEBot\Event\MessageEvent\ImageMessage) {
-    // get event contents
-    $content = $bot->getMessageContent($event->getMessageId());
+  // if ($event instanceof \LINE\LINEBot\Event\MessageEvent\ImageMessage) {
+  //   // get event contents
+  //   $content = $bot->getMessageContent($event->getMessageId());
+  //
+  //   // get content header
+  //   $headers = $content->getHeaders();
+  //   error_log(var_export($headers, true));
+  //
+  //   // storage folder
+  //   $directory_path = 'tmp';
+  //   $filename = uniqid();
+  //
+  //   // get content information
+  //   $extension = explode('/', $headers['Content-Type'])[1];
+  //
+  //   // if folder not exist
+  //   if (!file_exists($directory_path)) {
+  //     // make folder and change mode to 0777
+  //     if (mkdir($directory_path, 0777, true)) {
+  //       chmod($directory_path, 0777);
+  //     }
+  //   }
+  //
+  //   // storage contents on folder
+  //   file_put_contents($directory_path.'/'.$filename.'.'.$extension, $content->getRawBody);
+  //
+  //   // reply storaged folder url
+  //   replyTextMessage($bot, $event->getReplyToken(), 'http://'.$_SERVER['HTTP_HOST'].'/'.$directory_path.'/'.$filename.'.'.$extension);
+  // }
 
-    // get content header
-    $headers = $content->getHeaders();
-    error_log(var_export($headers, true));
+  // get user profile and reply message  // $replyText = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('TextMessage');
+  $profile = $bot->getProfile($event->getUserId())->getJSONDecodedBody();
+  error_log(var_export($profile, true));
 
-    // storage folder
-    $directory_path = 'tmp';
-    $filename = uniqid();
+  $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+  $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('Your Profile'));
+  $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('Name:'.$profile['displayName']));
+  $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('Image:'.$profile['pictureUrl']));
+  $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('Status:'.$profile['statusMessage']));
 
-    // get content information
-    $extension = explode('/', $headers['Content-Type'])[1];
-
-    // if folder not exist
-    if (!file_exists($directory_path)) {
-      // make folder and change mode to 0777
-      if (mkdir($directory_path, 0777, true)) {
-        chmod($directory_path, 0777);
-      }
-    }
-
-    // storage contents on folder
-    file_put_contents($directory_path.'/'.$filename.'.'.$extension, $content->getRawBody);
-
-    // reply storaged folder url
-    replyTextMessage($bot, $event->getReplyToken(), 'http://'.$_SERVER['HTTP_HOST'].'/'.$directory_path.'/'.$filename.'.'.$extension);
-  }
+  $bot->replyMessage($event->getReplyToken, $builder);
 }
 
 /*===== function =====*/
