@@ -202,7 +202,7 @@ function replyConfirmTemplate($bot, $replyToken, $alternativeText, $text, ...$ac
 // carousel template reply
 function replyCarouselTemplate($bot, $replyToken, $alternativeText, $columnArray) {
   // instancing "CarouselTemplateBuilder" and "TemplateMessageBuilder"
-  $carouselBuilder = new \LINE\LINEBot\MessageBuilder\CarouselTemplateBuilder($columnArray);
+  $carouselBuilder = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder($columnArray);
   $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alternativeText, $carouselBuilder);
 
   $response = $bot->replyMessage($replyToken, $builder);
