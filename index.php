@@ -17,11 +17,11 @@ $events = $bot->parseEventRequest(file_get_contents('php://input'), $signature);
 // process rooply each events in array
 foreach ($events as $event) {
   // collect multi messages
-  $replyText = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('TextMessage');
-  $replyImg = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder('https://'.$_SERVER['HTTP_HOST'].'/img/original.jpg', 'https://'.$_SERVER['HTTP_HOST'].'/img/preview.jpg');
-  $replyLoc = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder('LINE', '東京都渋谷区渋谷2-21-1 ヒカリエ27階', 35.659025, 139.703473);
-  $replySticker = new \LINE\LINEBot\MessageBuilder\StickerMessageBuilder(1, 1);
-  replyMultiMessage($bot, $event->getReplyToken(), $replyText, $replyImg, $replyLoc, $replySticker);
+  // $replyText = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('TextMessage');
+  // $replyImg = new \LINE\LINEBot\MessageBuilder\ImageMessageBuilder('https://'.$_SERVER['HTTP_HOST'].'/img/original.jpg', 'https://'.$_SERVER['HTTP_HOST'].'/img/preview.jpg');
+  // $replyLoc = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder('LINE', '東京都渋谷区渋谷2-21-1 ヒカリエ27階', 35.659025, 139.703473);
+  // $replySticker = new \LINE\LINEBot\MessageBuilder\StickerMessageBuilder(1, 1);
+  // replyMultiMessage($bot, $event->getReplyToken(), $replyText, $replyImg, $replyLoc, $replySticker);
 
   // reply message and proceed next event
   // replyTextMessage($bot, $event->getReplyToken(), 'TextMessage');
@@ -40,9 +40,16 @@ foreach ($events as $event) {
 
   // reply audio and proceed next event
   // replyAudioMessage($bot, $event->getReplyToken(), 'https://'.$_SERVER['HTTP_HOST'].'/audio/sample.m4a', 6000);
+
+  // reply buttons template and proceed next event
+  $action1 = new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder('TOMORROW WEATHER', 'tomorrow');
+  $action2 = new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('WEEKEND WEATHER', 'weekend');
+  $action3 = new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder('PREVIEW WEB', 'http://google.jp');
+  replyButtonsTemplate($bot, $event->getReplyToken(), 'Weather News: Sunny', 'https://'.$_SERVER['HTTP_HOST'].'/img/template.jpg', 'WEATHER NEWS', 'SUNNY', $action1, $action2, $action3)
 }
 
-/*----- function -----*/
+/*===== function =====*/
+/*=== basic contents ===*/
 // text reply
 function replyTextMessage($bot, $replyToken, $text) {
   // reply and get response
@@ -109,7 +116,7 @@ function replyAudioMessage($bot, $replyToken, $originalContentUrl, $audioLength)
 
 // multi message reply
 function replyMultiMessage($bot, $replyToken, ...$msgs) {
-  // instancing MultiMessageBuilder
+  // instancing "MultiMessageBuilder"
   $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
 
   // add all messages in builder
@@ -118,6 +125,29 @@ function replyMultiMessage($bot, $replyToken, ...$msgs) {
   }
 
   // multi message
+  $response = $bot->replyMessage($replyToken, $builder);
+
+  if (!$response->isSucceeded()) {
+    error_log('Failed! '.$response->getHTTPStatus.' '.$response->getRawBody());
+  }
+}
+
+/*=== rich text contents ===*/
+// buttons template reply
+function replyButtonsTemplate($bot, $replyToken, $alternativeText, $imageUrl, $title, $text, ...$actions) {
+  // action array
+  $actionArray = array();
+
+  // add all actions
+  foreach ($actions as $value) {
+    array_push($actionArray, $value);
+  }
+
+  // instancing "ButtonTemplateBuilder" and "TemplateMessageBuilder"
+  $buttonBuilder = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder($title, $text, $imageUrl, $actionArray);
+  $builder = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder($alternativeText, $buttonBuilder);
+
+  // button template
   $response = $bot->replyMessage($replyToken, $builder);
 
   if (!$response->isSucceeded()) {
