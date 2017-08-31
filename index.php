@@ -164,7 +164,7 @@ function replyButtonsTemplate($bot, $replyToken, $alternativeText, $imageUrl, $t
 }
 
 // confirm template reply
-function replyConfirmTemplate($bot, $replyToken, $alternativeText, $text, ...$action) {
+function replyConfirmTemplate($bot, $replyToken, $alternativeText, $text, ...$actions) {
   // action array
   $actionArray = array();
 
