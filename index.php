@@ -89,7 +89,7 @@ foreach ($events as $event) {
     // if folder not exist
     if (!file_exists($directory_path)) {
       // make folder and change mode to 0777
-      if (mkdir($directory_path, 0777, true))) {
+      if (mkdir($directory_path, 0777, true)) {
         chmod($directory_path, 0777);
       }
     }
