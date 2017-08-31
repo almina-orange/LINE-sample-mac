@@ -111,7 +111,7 @@ foreach ($events as $event) {
   $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('Image:'.$profile['pictureUrl']));
   $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('Status:'.$profile['statusMessage']));
 
-  $bot->replyMessage($event->getReplyToken, $builder);
+  $bot->replyMessage($event->getReplyToken(), $builder);
 }
 
 /*===== function =====*/
